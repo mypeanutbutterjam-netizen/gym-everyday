@@ -1,7 +1,7 @@
 import { chromium } from 'playwright-core';
 import { writeFileSync } from 'fs';
 
-const BASE = process.argv[2] || 'https://jansonlau0126.github.io/fitness-app/';
+const BASE = process.argv[2] || 'https://mypeanutbutterjam-netizen.github.io/gym-everyday/';
 const OUT = new URL('./screenshots/', import.meta.url).pathname;
 const b = await chromium.launch({ executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });
 const ctx = await b.newContext({

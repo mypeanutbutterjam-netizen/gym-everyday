@@ -1,5 +1,5 @@
 import { chromium } from 'playwright-core';
-const BASE = 'https://jansonlau0126.github.io/fitness-app/';
+const BASE = 'https://mypeanutbutterjam-netizen.github.io/gym-everyday/';
 const OUT = new URL('./screenshots/', import.meta.url).pathname;
 const b = await chromium.launch({ executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });
 const ctx = await b.newContext({

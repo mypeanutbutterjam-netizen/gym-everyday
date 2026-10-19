@@ -29,6 +29,8 @@ npm run build
 Vite `base` is `./`, so one build works on a GitHub Pages project site at any subpath until cutover. Do not hardcode `/fitness-app/` as the only base.
 
 ## Cloud sync
-Optional. The public site does not ship a Google OAuth client, so cloud sync stays off.
+Optional. The public site does not ship a Google OAuth client, so cloud sync stays off there.
 
-To enable sync later on the dedicated Cloudflare Account: deploy the Worker under `mypeanutbutterjam`, set `VITE_SYNC_API` and `VITE_GOOGLE_CLIENT_ID` for the build, and configure Google OAuth origins for the official Pages URL.
+Current API host: `https://gym-everyday-api.jansonlau.workers.dev`
+
+To turn sync on for a deployment, create a Google OAuth **Web** client ID whose authorized JavaScript origins include that site and localhost. Set it as Worker secret `GOOGLE_CLIENT_ID` and Vite env `VITE_GOOGLE_CLIENT_ID`.

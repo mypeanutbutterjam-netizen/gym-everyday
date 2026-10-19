@@ -1,7 +1,7 @@
 import { normalize, type AppData } from './store';
 
 export const SYNC_API = (import.meta as ImportMeta & { env: Record<string, string> }).env?.VITE_SYNC_API
-  || ''; // set VITE_SYNC_API when dedicated sync is deployed
+  || '';
 export const GOOGLE_CLIENT_ID = (import.meta as ImportMeta & { env: Record<string, string> }).env?.VITE_GOOGLE_CLIENT_ID || '';
 
 const AUTH_KEY = 'gym-everyday-auth';
