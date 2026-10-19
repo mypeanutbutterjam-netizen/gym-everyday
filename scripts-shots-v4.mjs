@@ -35,7 +35,7 @@ await p.waitForTimeout(2800);
 
 // Jump to a recent training day with entries
 await p.evaluate(() => {
-  const d = JSON.parse(localStorage.getItem('janson-fit-v1'));
+  const d = JSON.parse(localStorage.getItem('gym-everyday-v1'));
   const dates = [...new Set(d.entries.map((e) => e.date))].sort();
   const last = dates[dates.length - 1];
   // store intended date in session via hash — DayPage uses React state; instead inject a today entry by copying last day to today
@@ -46,7 +46,7 @@ await p.evaluate(() => {
   }));
   d.entries.push(...sample);
   d.profile.age = 50; d.profile.weightKg = 75;
-  localStorage.setItem('janson-fit-v1', JSON.stringify(d));
+  localStorage.setItem('gym-everyday-v1', JSON.stringify(d));
 });
 await p.reload({ waitUntil: 'networkidle' });
 await p.waitForTimeout(500);

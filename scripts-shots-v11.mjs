@@ -35,9 +35,9 @@ await p.locator('button').filter({ hasText: /Load demo data/ }).click();
 await p.locator('.dialog button').filter({ hasText: /Load demo/ }).click();
 await p.waitForTimeout(2800);
 await p.evaluate(() => {
-  const d = JSON.parse(localStorage.getItem('janson-fit-v1'));
+  const d = JSON.parse(localStorage.getItem('gym-everyday-v1'));
   d.settings.locale = 'en';
-  localStorage.setItem('janson-fit-v1', JSON.stringify(d));
+  localStorage.setItem('gym-everyday-v1', JSON.stringify(d));
 });
 await p.reload({ waitUntil: 'networkidle' });
 await p.waitForTimeout(700);

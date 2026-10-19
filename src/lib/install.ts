@@ -2,8 +2,8 @@ import { useSyncExternalStore } from 'react';
 import { todayKey } from './date';
 
 /**
- * Install prompt memory. Separate from the workout store on purpose:
- * the workout key stays `janson-fit-v1` so existing logs are not dropped.
+ * Install prompt memory. Separate from the workout store on purpose.
+ * Workouts live in `gym-everyday-v1`, copied once from `janson-fit-v1`.
  */
 const INSTALL_KEY = 'gym-everyday-install';
 export const INSTALL_HELP_EVENT = 'gym-install-help';

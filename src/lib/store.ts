@@ -24,7 +24,7 @@ export interface Settings {
   shareStyle: ShareStyle;
 }
 export interface AppData {
-  app: 'janson-fit';
+  app: 'gym-everyday';
   version: 1;
   profile: Profile;
   weights: WeightLog[];
@@ -62,8 +62,9 @@ export function nextFocus(f: PlanFocus): PlanFocus {
   return PLAN_CYCLE[(i + 1) % PLAN_CYCLE.length];
 }
 
-// Keep this key. Renaming it would drop existing workouts unless we migrate them.
-const KEY = 'janson-fit-v1';
+/** Current workout store. Existing installs are copied once from LEGACY_STORAGE_KEY. */
+export const STORAGE_KEY = 'gym-everyday-v1';
+export const LEGACY_STORAGE_KEY = 'janson-fit-v1';
 
 function detectLocale(): Locale {
   try {
@@ -74,18 +75,45 @@ function detectLocale(): Locale {
 }
 
 export const emptyData = (): AppData => ({
-  app: 'janson-fit', version: 1,
+  app: 'gym-everyday', version: 1,
   profile: { name: '', sex: 'male', age: null, heightCm: null, weightKg: null },
   weights: [], entries: [], custom: [],
   settings: { theme: 'auto', locale: detectLocale(), restSec: 90, plan: [...DEFAULT_PLAN], shareStyle: 'neon' },
   updatedAt: Date.now(),
 });
 
+type Kv = Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
+
+function readStored(storage: Kv, key: string): AppData | null {
+  try {
+    const raw = storage.getItem(key);
+    if (!raw) return null;
+    return normalize(JSON.parse(raw));
+  } catch {
+    return null;
+  }
+}
+
+/** Prefer `gym-everyday-v1`. If that key is empty, copy `janson-fit-v1` once. */
+export function loadFromStorage(storage: Kv): AppData {
+  const current = readStored(storage, STORAGE_KEY);
+  if (current) return current;
+  const legacy = readStored(storage, LEGACY_STORAGE_KEY);
+  if (!legacy) return emptyData();
+  try {
+    storage.setItem(STORAGE_KEY, JSON.stringify(legacy));
+    storage.removeItem(LEGACY_STORAGE_KEY);
+  } catch {
+    // Quota or private mode: this session still uses the copied object.
+    // Leave the legacy key so the next launch can try the copy again.
+  }
+  return legacy;
+}
+
 function load(): AppData {
   try {
-    const raw = localStorage.getItem(KEY);
-    if (!raw) return emptyData();
-    return normalize(JSON.parse(raw));
+    if (typeof localStorage === 'undefined') return emptyData();
+    return loadFromStorage(localStorage);
   } catch {
     return emptyData();
   }
@@ -161,7 +189,7 @@ const listeners = new Set<() => void>();
 function notify() { listeners.forEach((l) => l()); }
 function emit() {
   try {
-    localStorage.setItem(KEY, JSON.stringify(state));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   } catch {
     toast('Could not save — storage full. Export a backup.');
     return false;
@@ -186,7 +214,8 @@ export const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().to
 // Keep tabs/webviews in sync when another one writes localStorage.
 if (typeof window !== 'undefined') {
   window.addEventListener('storage', (e) => {
-    if (e.key !== KEY) return;
+    if (e.key !== STORAGE_KEY && e.key !== LEGACY_STORAGE_KEY) return;
+    if (e.key === LEGACY_STORAGE_KEY && localStorage.getItem(STORAGE_KEY)) return;
     try {
       state = e.newValue ? normalize(JSON.parse(e.newValue)) : emptyData();
     } catch {
