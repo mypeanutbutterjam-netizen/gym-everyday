@@ -31,6 +31,10 @@ Vite `base` is `./`, so one build works on a GitHub Pages project site at any su
 ## Cloud sync
 Optional. The public site does not ship a Google OAuth client, so cloud sync stays off there.
 
-Current API host: `https://gym-everyday-api.jansonlau.workers.dev`
+`VITE_SYNC_API` is the origin of the dedicated sync Worker. Leave it empty until that Worker is deployed (see `.env.example`). An example placeholder is `https://YOUR-DEDICATED-SYNC.example`.
 
-To turn sync on for a deployment, create a Google OAuth **Web** client ID whose authorized JavaScript origins include that site and localhost. Set it as Worker secret `GOOGLE_CLIENT_ID` and Vite env `VITE_GOOGLE_CLIENT_ID`.
+To turn sync on for a web deployment, create a Google OAuth **Web** client ID whose authorized JavaScript origins include that site and localhost. Set it as Worker secret `GOOGLE_CLIENT_ID` and Vite env `VITE_GOOGLE_CLIENT_ID`, and set `VITE_SYNC_API` to your Worker origin.
+
+## Phone shell
+`expo-app/` loads the official site in a WebView. Install, EAS build, and submit steps are in `expo-app/README.md`. Google sign-in is not part of that shell: sync is off on the public site, and this app does not claim WebView OAuth works.
+
